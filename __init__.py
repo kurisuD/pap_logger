@@ -223,7 +223,7 @@ class PaPLogger:
         self._sysout_handler.close()
 
     def _update_sysout_level(self):
-        self._sysout_handler.level = self.level
+        self._sysout_handler.setLevel(self.level)
         level_name = logging.getLevelName(self._sysout_handler.level)
         self.logger.info(f"Sysout logging with level {level_name}")
 
