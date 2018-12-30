@@ -72,23 +72,26 @@ class PaPLogger:
         self._logfile_with_hostname = logfile_with_hostname
         self._when = when
         self._backup_count = backup_count
+        self._level = logging.INFO
+
         self._log_file = None
         self._syslog_host = None
         self._syslog_port = 514
-        self._level = logging.WARNING
 
         self._sysout_handler = self.logger.handlers[0]
         self._logfile_handler = None
         self._syslog_handler = None
+        self.level = logging.WARNING
 
         self._update_sysout_formatter()
         self._update_logger_level()
         self._update_sysout_level()
 
     def _update_logger_level(self):
-        self.logger.setLevel(self.level)
-        level_name = logging.getLevelName(self.logger.getEffectiveLevel())
-        self.logger.info(f"Logging with global level {level_name}")
+        if self.level != self.logger.getEffectiveLevel():
+            self.logger.setLevel(self.level)
+            level_name = logging.getLevelName(self.logger.getEffectiveLevel())
+            self.logger.debug(f"Logging with global level {level_name}")
 
     @property
     def level(self) -> int:
@@ -217,15 +220,17 @@ class PaPLogger:
         return logging.Formatter(fmt=fmt_from_dict['format'], datefmt=fmt_from_dict['datefmt'])
 
     def _update_sysout_formatter(self):
-        sysout_fmt_name = 'logfile' if (self.verbose_fmt or self.level <= logging.WARNING) else 'simple'
-        sysout_fmt = self._get_formatter_from_dict(sysout_fmt_name)
-        self._sysout_handler.setFormatter(sysout_fmt)
-        self._sysout_handler.close()
+        if self._sysout_handler:
+            sysout_fmt_name = 'logfile' if (self.verbose_fmt or self.level <= logging.WARNING) else 'simple'
+            sysout_fmt = self._get_formatter_from_dict(sysout_fmt_name)
+            self._sysout_handler.setFormatter(sysout_fmt)
+            self._sysout_handler.close()
 
     def _update_sysout_level(self):
-        self._sysout_handler.setLevel(self.level)
-        level_name = logging.getLevelName(self._sysout_handler.level)
-        self.logger.info(f"Sysout logging with level {level_name}")
+        if self._sysout_handler and self._sysout_handler.level != self.level:
+            self._sysout_handler.setLevel(self.level)
+            level_name = logging.getLevelName(self._sysout_handler.level)
+            self.logger.debug(f"Sysout logging with level {level_name}")
 
     def _add_syslog_handler(self):
         """Adds a SysLogHandler, with minimum logging set to WARNING and a 'verbose' format"""
@@ -262,15 +267,21 @@ class PaPLogger:
         self.logger.debug(f"Log rotates every {self._when} and keeps {self._backup_count} logs.")
 
     def _update_logfile_formatter(self):
-        logfile_fmt_name = 'logfile_with_host' if self.logfile_with_hostname else 'logfile'
-        logfile_fmt = self._get_formatter_from_dict(logfile_fmt_name)
-        self._logfile_handler.setFormatter(logfile_fmt)
-        self._logfile_handler.close()
+        if self._logfile_handler:
+            logfile_fmt_name = 'logfile_with_host' if self.logfile_with_hostname else 'logfile'
+            logfile_fmt = self._get_formatter_from_dict(logfile_fmt_name)
+            self._logfile_handler.setFormatter(logfile_fmt)
+            self._logfile_handler.close()
 
     def _update_logfile_handler(self):
         if self._logfile_handler:
-            self._logfile_handler.close()
-            self._logfile_handler.baseFilename = self.log_file
+            if self._logfile_handler.level != self.level:
+                self._logfile_handler.setLevel(self.level)
+                level_name = logging.getLevelName(self._logfile_handler.level)
+                self.logger.debug(f"Logging with TimedRotatingFileHandler level {level_name}")
+            if self._logfile_handler.baseFilename != self.log_file:
+                self._logfile_handler.close()
+                self._logfile_handler.baseFilename = self.log_file
 
     def _remove_logfile_handler(self):
         if self._logfile_handler:
