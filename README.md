@@ -1,5 +1,7 @@
 # pap_logger
-##A 'prêt-à-porter' logger with a sysout StreamHandler and optionally, a SysLogHandler and/or a TimedRotatingFileHandler
+
+## A 'prêt-à-porter' logger with a sysout StreamHandler and optionally, a SysLogHandler and/or a TimedRotatingFileHandler
+
 ### Usage
 
 ```python
@@ -47,7 +49,8 @@ More detailed usage examples are given in the function _pap_logger_example.
 
 Please refer to the source code.
 
-###Compatibility information
+### Compatibility information
+
 This module will only run with Python 3.5 and ulterior due to its use of f-strings.
 
 It has only been tested under GNU/Linux.
