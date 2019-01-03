@@ -127,6 +127,6 @@ In such cases, the exception is catched, an error is logged, and the SysLogHandl
 
 ### Compatibility information
 
-This module will only run with Python 3.5 and ulterior due to its use of f-strings.
+This module will only run with Python 3.6 and above due to its use of f-strings.
 
 It has only been tested under GNU/Linux.
