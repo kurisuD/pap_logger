@@ -87,8 +87,8 @@ pap.log_file = None
 pap.syslog_host = "your_syslog_server"
 # Setting it to None will remove the SysLogHandler
 pap.syslog_host = None
-# The log file can be prefixed by the hostname for cases where the machine where logs are created is necessary.
-# When activated, the hostname is also written in the logs.∨
+# The log file can be prefixed by the hostname for cases where logging source identification is necessary.
+# When activated, the hostname is also written in the logs.
 pap.logfile_with_hostname = True
 ```
 
@@ -96,7 +96,7 @@ The SysLogHandler will only log records with level WARNING or above and always i
 
 The TimedRotatingFileHandler is rotating by default every day, and 15 days of logs are kept.
 
-These values can only be changed when instantiating LsslLogger:
+These values can only be changed when instantiating PaPLogger:
 ```python
 from pathlib import Path
 from pap_logger import *
