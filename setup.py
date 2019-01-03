@@ -1,22 +1,23 @@
 # coding=utf-8
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.md") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="pap_logger",
-    version="0.0.1",
+    version="0.0.3",
     author="KurisuD",
-    author_email="author@example.com",
+    author_email="pypi@darnand.net",
     description="A 'prêt-à-porter' logger",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/KurisuD/pap_logger",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.5",
+        "License :: Public Domain",
         "Operating System :: OS Independent",
         "Topic :: System :: Logging"
     ],
