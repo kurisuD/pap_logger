@@ -86,7 +86,7 @@ class PaPLogger:
 
         self._logfile_handler = None
         self._syslog_handler = None
-        self.level = level if level != NOTSET else INFO
+        self.level = level if level != NOTSET else WARNING
 
         self._update_sysout_formatter()
         self._update_logger_level()
