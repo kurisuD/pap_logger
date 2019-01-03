@@ -227,7 +227,8 @@ class PaPLogger:
 
     def _update_sysout_formatter(self):
         if self._sysout_handler:
-            sysout_fmt_name = 'logfile' if (self.verbose_fmt or self.level <= WARNING) else 'simple'
+            sysout_fmt_name = 'logfile' if (self.verbose_fmt or self.level < WARNING) else 'simple'
+            self._logger.debug(f"Changing sysout format to {sysout_fmt_name}")
             sysout_fmt = self._get_formatter_from_dict(sysout_fmt_name)
             self._sysout_handler.setFormatter(sysout_fmt)
             self._sysout_handler.close()
