@@ -111,7 +111,7 @@ These values can only be changed when instantiating PaPLogger:
 ```python
 from pathlib import Path
 from pap_logger import *
-pap = PaPLogger(level=INFO, verbose_fmt=True, when='W', backup_count=4)
+pap = PaPLogger(level=INFO, verbose_fmt=True, when='W6', backup_count=4)
 pap.log_file = Path("/var/log/new_log_file_name")
 ```
 
