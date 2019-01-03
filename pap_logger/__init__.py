@@ -12,6 +12,7 @@ from datetime import datetime
 from pytz import reference
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, NOTSET
 
+name = "pap_logger"
 __example_name__ = "pap_logger_example"
 
 
