@@ -2,6 +2,17 @@
 
 ## A 'prêt-à-porter' logger with a sysout StreamHandler and optionally, a SysLogHandler ∥ a TimedRotatingFileHandler
 
+### Installation
+```bash
+python3 -m pip install pap_logger
+```
+
+### Compatibility information
+
+This module will only run with Python 3.6 and above due to its use of f-strings.
+
+It has only been tested under GNU/Linux.
+
 ### Usage
 ```python
 from pap_logger import PaPLogger
@@ -123,10 +134,3 @@ In such cases, the exception is catched, an error is logged, and the TimedRotati
 Network errors are _NOT_ raised  when logging to an unreachable syslog server.
 
 In such cases, the exception is catched, an error is logged, and the SysLogHandler isn't added to the logger.
-
-
-### Compatibility information
-
-This module will only run with Python 3.6 and above due to its use of f-strings.
-
-It has only been tested under GNU/Linux.
