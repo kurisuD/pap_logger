@@ -119,7 +119,7 @@ Please refer to [TimedRotatingFileHandler](https://docs.python.org/3/library/log
 
 A demonstration of usage examples is given in the function _pap_logger_example.
 
-Please run and refer to the source code.
+Please run `python3 -m pap_logger` and refer to the source code.
 
 ### Exception raised and error handling
 
