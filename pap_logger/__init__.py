@@ -8,8 +8,6 @@ from logging import config
 from logging.handlers import SysLogHandler, TimedRotatingFileHandler
 from pathlib import Path
 from socket import gethostname, error as socket_error
-from datetime import datetime
-from pytz import reference
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, NOTSET
 
 name = "pap_logger"
@@ -17,6 +15,12 @@ __example_name__ = "pap_logger_example"
 
 
 def _get_timezone():
+    import locale
+    # Under Win32, the timezone is reported in the current codepage encoding.
+    # http://d.hatena.ne.jp/itasuke/20150505/mojibake_tzname
+    locale.setlocale(locale.LC_ALL, '')  # Needs to be called before importing datetime
+    from datetime import datetime
+    from pytz import reference
     return reference.LocalTimezone().tzname(datetime.now())
 
 
