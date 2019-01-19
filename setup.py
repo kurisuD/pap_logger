@@ -6,7 +6,7 @@ with open("README.md") as fh:
 
 setuptools.setup(
     name="pap_logger",
-    version="0.0.4",
+    version="0.0.7",
     author="KurisuD",
     author_email="KurisuD@pypi.darnand.net",
     description="A 'prêt-à-porter' logger",
@@ -14,6 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/KurisuD/pap_logger",
     packages=setuptools.find_packages(),
+    install_requires=['pathlib', 'pytz'],
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
