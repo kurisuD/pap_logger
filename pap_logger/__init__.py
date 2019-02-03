@@ -4,6 +4,7 @@ Licensed under WTFPL.
 http://www.wtfpl.net/about/
 """
 import locale
+
 # Under Win32, the timezone is reported in the current codepage encoding.
 # http://d.hatena.ne.jp/itasuke/20150505/mojibake_tzname
 locale.setlocale(locale.LC_ALL, '')  # Needs to be called before importing datetime
@@ -28,26 +29,26 @@ def _get_timezone():
 def _get_logging_dict():
     tz = _get_timezone()
     base_fmt = "%(module)s : %(message)s"
-    prefix_log_file_fmt = f'%(asctime)s.%(msecs)03d {tz} [%(levelname)8s]'
+    prefix_log_file_fmt = '%(asctime)s.%(msecs)03d {} [%(levelname)8s]'.format(tz)
     base_ts = '%Y-%m-%d %H:%M:%S'
     return {
         'version': 1,
         'formatters': {
             'logfile_with_host': {
-                'format': f'{prefix_log_file_fmt} ({gethostname()}) {base_fmt}',
+                'format': '{} ({}) {}'.format(prefix_log_file_fmt, gethostname(), base_fmt),
                 'datefmt': base_ts
             },
             'logfile': {
-                'format': f'{prefix_log_file_fmt} {base_fmt}',
+                'format': '{} {}'.format(prefix_log_file_fmt, base_fmt),
                 'datefmt': base_ts
             },
             'syslog': {
-                'format': f'[%(levelname)8s] {base_fmt}',
+                'format': '[%(levelname)8s] {}'.format(base_fmt),
                 'datefmt': base_ts
             },
             'simple': {
                 'format': "%(asctime)s : %(message)s",
-                'datefmt': f'{base_ts} {tz}'
+                'datefmt': '{} {}'.format(base_ts, tz)
             },
         },
         'handlers': {
@@ -102,7 +103,7 @@ class PaPLogger:
         if self.level != self._logger.getEffectiveLevel():
             self._logger.setLevel(self.level)
             level_name = logging.getLevelName(self._logger.getEffectiveLevel())
-            self._logger.debug(f"Logging with global level {level_name}")
+            self._logger.debug("Logging with global level {}".format(level_name))
 
     @property
     def logger(self) -> logging.Logger:
@@ -152,9 +153,9 @@ class PaPLogger:
     def logfile_with_hostname(self, value: bool):
         if value != self.logfile_with_hostname:
             if not self.logfile_with_hostname and value:
-                self.log_file = self.log_file.parent / f"{gethostname()}_{self.log_file.name}"
+                self.log_file = self.log_file.parent / "{}_{}".format(gethostname(), self.log_file.name)
             elif self.logfile_with_hostname and not value:
-                self.log_file = self.log_file.parent / self.log_file.name.replace(f"{gethostname()}_", "")
+                self.log_file = self.log_file.parent / self.log_file.name.replace("{}_".format(gethostname()), "")
             self._logfile_with_hostname = value
             self._update_logfile_formatter()
 
@@ -173,7 +174,7 @@ class PaPLogger:
             return
 
         if self.log_file:
-            self._logger.debug(f"Changing log file from {self.log_file} to {value}")
+            self._logger.debug("Changing log file from {} to {}".format(self.log_file, value))
 
         if isinstance(value, str):
             self._log_file = Path(value)
@@ -189,7 +190,8 @@ class PaPLogger:
             else:
                 self._update_logfile_handler()
         except PermissionError:
-            self._logger.error(f"Could not create {self.log_file.name} in {self.log_file.parent}: Permission Denied")
+            self._logger.error("Could not create {} in {}: Permission Denied".format(
+                self.log_file.name, self.log_file.parent))
 
     @property
     def syslog_host(self) -> str:
@@ -212,7 +214,7 @@ class PaPLogger:
             else:
                 self._update_syslog_handler()
         except socket_error:
-            self._logger.error(f"Could not connect to syslog on {self.syslog_host}:{self.syslog_port}")
+            self._logger.error("Could not connect to syslog on {}:{}".format(self.syslog_host, self.syslog_port))
 
     @property
     def syslog_port(self) -> int:
@@ -234,7 +236,7 @@ class PaPLogger:
     def _update_sysout_formatter(self):
         if self._sysout_handler:
             sysout_fmt_name = 'logfile' if (self.verbose_fmt or self.level < WARNING) else 'simple'
-            self._logger.debug(f"Changing sysout format to {sysout_fmt_name}")
+            self._logger.debug("Changing sysout format to {}".format(sysout_fmt_name))
             sysout_fmt = self._get_formatter_from_dict(sysout_fmt_name)
             self._sysout_handler.setFormatter(sysout_fmt)
             self._sysout_handler.close()
@@ -243,7 +245,7 @@ class PaPLogger:
         if self._sysout_handler and self._sysout_handler.level != self.level:
             self._sysout_handler.setLevel(self.level)
             level_name = logging.getLevelName(self._sysout_handler.level)
-            self._logger.debug(f"Sysout logging with level {level_name}")
+            self._logger.debug("Sysout logging with level {}".format(level_name))
 
     def _add_syslog_handler(self):
         """Adds a SysLogHandler, with minimum logging set to WARNING and a 'verbose' format"""
@@ -252,7 +254,8 @@ class PaPLogger:
         self._syslog_handler.setFormatter(self._get_formatter_from_dict('syslog'))
         self._logger.addHandler(self._syslog_handler)
         level_name = logging.getLevelName(self._syslog_handler.level)
-        self._logger.debug(f"Added SysLogHandler to {self.syslog_host}:{self.syslog_port} with level {level_name}.")
+        self._logger.debug("Added SysLogHandler to {}:{} with level {}.".format(
+            self.syslog_host, self.syslog_port, level_name))
 
     def _update_syslog_handler(self):
         if self._syslog_handler:
@@ -269,15 +272,15 @@ class PaPLogger:
             self._logfile_handler = TimedRotatingFileHandler(filename=self.log_file, when=self._when,
                                                              backupCount=self._backup_count)
         except ValueError as e:
-            self._logger.error(f"TimedRotatingFileHandler : {e}")
+            self._logger.error("TimedRotatingFileHandler : {}".format(e))
             return
 
         self._logfile_handler.setLevel(logging.DEBUG)
         self._update_logfile_formatter()
         self._logger.addHandler(self._logfile_handler)
         level_name = logging.getLevelName(self._logfile_handler.level)
-        self._logger.debug(f"Added TimedRotatingFileHandler to {self.log_file} with level {level_name}.")
-        self._logger.debug(f"Log rotates every {self._when} and keeps {self._backup_count} logs.")
+        self._logger.debug("Added TimedRotatingFileHandler to {} with level {}.".format(self.log_file, level_name))
+        self._logger.debug("Log rotates every {} and keeps {} logs.".format(self._when, self._backup_count))
 
     def _update_logfile_formatter(self):
         if self._logfile_handler:
@@ -291,7 +294,7 @@ class PaPLogger:
             if self._logfile_handler.level != self.level:
                 self._logfile_handler.setLevel(self.level)
                 level_name = logging.getLevelName(self._logfile_handler.level)
-                self._logger.debug(f"Logging with TimedRotatingFileHandler level {level_name}")
+                self._logger.debug("Logging with TimedRotatingFileHandler level {}".format(level_name))
             if self._logfile_handler.baseFilename != self.log_file:
                 self._logfile_handler.close()
                 self._logfile_handler.baseFilename = self.log_file
@@ -309,7 +312,7 @@ def _pap_logger_example(verbose_fmt: bool, log_path: Path, syslog_host: str):
     logger = pap.logger
 
     if log_path and log_path.exists() and not log_path.is_dir():
-        logger.critical(f"{log_path} is not a directory")
+        logger.critical("{} is not a directory".format(log_path))
         return
 
     syslog_host = "hostname_with_a_syslog_listening" if not syslog_host else syslog_host
@@ -323,12 +326,12 @@ def _pap_logger_example(verbose_fmt: bool, log_path: Path, syslog_host: str):
 
     for level in (DEBUG, INFO, WARNING, ERROR, CRITICAL):
         pap.level = level
-        pap.log_file = log_path / f"{__example_name__}.log"
+        pap.log_file = log_path / "{}.log".format(__example_name__)
         pap.syslog_host = syslog_host
         pap.verbose_fmt = False
         _log_in_all_levels("")
-        _log_in_all_levels(f"LEVEL SET TO {logging.getLevelName(level)} ({level})")
-        _log_in_all_levels(f"Hello from {__example_name__}")
+        _log_in_all_levels("LEVEL SET TO {} ({})".format(logging.getLevelName(level), level))
+        _log_in_all_levels("Hello from {}".format(__example_name__))
         pap.logfile_with_hostname = True
         _log_in_all_levels("with hostname")
         pap.logfile_with_hostname = False
@@ -345,3 +348,6 @@ def _pap_logger_example(verbose_fmt: bool, log_path: Path, syslog_host: str):
 
 
 __all__ = ["PaPLogger", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "NOTSET"]
+
+if __name__ == "__main__":
+    _pap_logger_example(verbose_fmt=False, log_path=Path("."), syslog_host="localhost")
