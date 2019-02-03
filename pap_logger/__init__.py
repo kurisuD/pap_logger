@@ -269,7 +269,7 @@ class PaPLogger:
     def _add_logfile_handler(self):
         """Adds a TimedRotatingFileHandler, with minimum logging set to DEBUG and a 'verbose' format"""
         try:
-            self._logfile_handler = TimedRotatingFileHandler(filename=self.log_file, when=self._when,
+            self._logfile_handler = TimedRotatingFileHandler(filename=str(self.log_file), when=self._when,
                                                              backupCount=self._backup_count)
         except ValueError as e:
             self._logger.error("TimedRotatingFileHandler : {}".format(e))
@@ -295,9 +295,9 @@ class PaPLogger:
                 self._logfile_handler.setLevel(self.level)
                 level_name = logging.getLevelName(self._logfile_handler.level)
                 self._logger.debug("Logging with TimedRotatingFileHandler level {}".format(level_name))
-            if self._logfile_handler.baseFilename != self.log_file:
+            if self._logfile_handler.baseFilename != str(self.log_file):
                 self._logfile_handler.close()
-                self._logfile_handler.baseFilename = self.log_file
+                self._logfile_handler.baseFilename = str(self.log_file)
 
     def _remove_logfile_handler(self):
         if self._logfile_handler:
