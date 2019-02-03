@@ -6,7 +6,7 @@ with open("README.md") as fh:
 
 setuptools.setup(
     name="pap_logger",
-    version="0.0.7",
+    version="0.0.8",
     author="KurisuD",
     author_email="KurisuD@pypi.darnand.net",
     description="A 'prêt-à-porter' logger",
@@ -17,7 +17,7 @@ setuptools.setup(
     install_requires=['pathlib', 'pytz'],
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.5",
         "License :: Public Domain",
         "Operating System :: OS Independent",
         "Topic :: System :: Logging"
