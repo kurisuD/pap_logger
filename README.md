@@ -9,9 +9,7 @@ python3 -m pip install pap_logger
 
 ### Compatibility information
 
-This module will only run with Python 3.6 and above due to its use of f-strings.
-
-It has only been tested under GNU/Linux.
+This module has only been tested with Python 3.5 under GNU/Linux, 3.7 under Windows and MacOS.
 
 ### Usage
 ```python
